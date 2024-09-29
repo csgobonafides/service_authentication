@@ -1,7 +1,7 @@
 import jwt
 from datetime import timedelta, datetime, timezone
 from pydantic import BaseModel
-from src.data.state_jwt import wotk_to_blt, state_blt
+from src.data.state_jwt import work_to_blt, state_blt
 
 SECRET_KEY = 'secretkey'
 ALGORITM = 'HS256'
@@ -31,10 +31,12 @@ class JwtWorker:
     def get_user_from_refresh(self, refresh):
         try:
             payload = jwt.decode(refresh, self.scr_key, algorithms=self.algoritm)
-            if payload.get('login'):
-                wotk_to_blt.set_state(payload.get('login'), refresh)
-                return self.creat_pair_jwt(payload.get('login'))
+            if work_to_blt.get_state(payload.get('login')) == None or refresh not in work_to_blt.get_state(payload.get('login')):
+                    work_to_blt.set_state(payload.get('login'), refresh)
+                    return self.creat_pair_jwt(payload.get('login'))
         except jwt.ExpiredSignatureError:
             return {'Error': 'ExpiredSignatureError'}
         except jwt.InvalidTokenError:
             return {'Error': 'InvalidTokenError'}
+        else:
+            return {'Error': 'Token to Black List.'}

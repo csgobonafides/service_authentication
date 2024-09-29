@@ -71,4 +71,4 @@ dir = Path(__file__).parent.parent.parent
 blt_path = dir /'black_token.json'
 
 state_blt = JsonFileStorage(blt_path)
-wotk_to_blt = State(state_blt)
+work_to_blt = State(state_blt)

@@ -7,8 +7,8 @@ from models.processing_request import process_req
 app = FastAPI()
 
 
-@app.post('/registration', response_model=User)
-async def registration(user: User) -> User:
+@app.post('/registration')
+async def registration(user: User):
     return work_to_user.set_user(user.login, user.password)
 
 

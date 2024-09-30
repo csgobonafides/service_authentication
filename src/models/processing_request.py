@@ -7,7 +7,7 @@ class ProcessReque:
 
     def access_head(self, request: Request):
         if request.headers.get('authorization'):
-            result = jwt_work.get_user_from_access(request.headers.get('authorization'))
+            result = jwt_work.get_user_from_access(request.headers.get('authorization')[7:])
             return result
         else:
             return {'error': 'Отсутствует токен.'}
@@ -22,7 +22,7 @@ class ProcessReque:
 
     def login_from_del(self, request):
         if request.headers.get('authorization'):
-            result = jwt_work.loging(request.headers.get('authorization'))
+            result = jwt_work.loging(request.headers.get('authorization')[7:])
             if result != {'Error': 'ExpiredSignatureError'} and result != {'Error': 'InvalidTokenError'}:
                 work_to_white.delet_tokens(result)
                 return True

@@ -30,3 +30,28 @@
 2024-09-30 15:41:39,946 - DEBUG - Using proactor: IocpProactor
 2024-09-30 15:41:53,801 - DEBUG - Using proactor: IocpProactor
 2024-09-30 15:41:57,158 - INFO - Set key-login 'qwe' with value-password '123' to sorage
+2024-09-30 16:03:08,108 - DEBUG - Using proactor: IocpProactor
+2024-09-30 16:03:14,660 - INFO - Пользователь с логином qwe уже зарегистрирован.
+2024-09-30 16:03:24,101 - INFO - Set key-login 'qwe2' with value-password '123' to sorage
+2024-09-30 16:03:43,547 - INFO - Выдана новая пара токенов для vika
+2024-09-30 16:03:43,548 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTQyODN9.MHiF5lf_JeP2h913-KGeLtIY22Dx4L4yylTLZflw8Ms' to sorage
+2024-09-30 16:03:43,548 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTQ4MjN9.VlXiaiApukojaPGmKKA2MXHRmsO6nJn8dSBgB9yOauc' to sorage
+2024-09-30 16:06:10,834 - INFO - Выдана новая пара токенов для qwe
+2024-09-30 16:06:10,835 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDQzMH0.8MuiXT90kpw6ow8nauWaQzOw5XoijnQFzOTd7T-Rtsw' to sorage
+2024-09-30 16:06:10,835 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDk3MH0.wUaE6axsBF7sa0uje9ADqBlIkP216mWBP3tq6q3mb3s' to sorage
+2024-09-30 16:07:44,909 - DEBUG - Using proactor: IocpProactor
+2024-09-30 16:07:56,062 - INFO - Выдана новая пара токенов для qwe
+2024-09-30 16:07:56,063 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDUzNn0.H41B4yEsf9-yKUyq-mi2LuoVYT_2D0ahElk4kqTQDjI' to sorage
+2024-09-30 16:07:56,064 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTA3Nn0.9Fjg2FI5f5QtDitCTtl8uVKAY72xFs8qC4hrJiGu-Lw' to sorage
+2024-09-30 16:08:19,080 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTA3Nn0.9Fjg2FI5f5QtDitCTtl8uVKAY72xFs8qC4hrJiGu-Lw' to sorage
+2024-09-30 16:08:19,081 - INFO - Выдана новая пара токенов для qwe
+2024-09-30 16:08:19,081 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDU1OX0.YyZ6qM5HE3kYxHK6OA5pt4XmYiWXPTfRE_lPbmf9k-g' to sorage
+2024-09-30 16:08:19,082 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTA5OX0.9JKDxJE425Ty9jtiFDooZa_WdWpbwDHJgCF-Ti1Roew' to sorage
+2024-09-30 16:09:17,645 - DEBUG - Using proactor: IocpProactor
+2024-09-30 16:09:37,653 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTA5OX0.9JKDxJE425Ty9jtiFDooZa_WdWpbwDHJgCF-Ti1Roew' to sorage
+2024-09-30 16:09:37,653 - INFO - Выдана новая пара токенов для qwe
+2024-09-30 16:09:37,654 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDYzN30.NmYG2QUuOo88UvUmBByBQ6j_gxlBYM4qnUmRzkibmqA' to sorage
+2024-09-30 16:09:37,654 - INFO - Set key 'qwe' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTE3N30.aqL6iqna7FI54VIe3hJyDd251OEYb18gCWrF_yEOTOg' to sorage
+2024-09-30 16:09:45,002 - INFO - Set key 'qwe' with value '['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDQzMH0.8MuiXT90kpw6ow8nauWaQzOw5XoijnQFzOTd7T-Rtsw', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDk3MH0.wUaE6axsBF7sa0uje9ADqBlIkP216mWBP3tq6q3mb3s', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDUzNn0.H41B4yEsf9-yKUyq-mi2LuoVYT_2D0ahElk4kqTQDjI', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTA3Nn0.9Fjg2FI5f5QtDitCTtl8uVKAY72xFs8qC4hrJiGu-Lw', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDU1OX0.YyZ6qM5HE3kYxHK6OA5pt4XmYiWXPTfRE_lPbmf9k-g', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTA5OX0.9JKDxJE425Ty9jtiFDooZa_WdWpbwDHJgCF-Ti1Roew', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NDYzN30.NmYG2QUuOo88UvUmBByBQ6j_gxlBYM4qnUmRzkibmqA', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InF3ZSIsImV4cCI6MTcyNzY5NTE3N30.aqL6iqna7FI54VIe3hJyDd251OEYb18gCWrF_yEOTOg']' to sorage
+2024-09-30 16:11:25,714 - DEBUG - Using proactor: IocpProactor
+2024-09-30 16:11:40,811 - WARNING - Попытка использовать рефреш токен повторно для qwe

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import logging
 from pathlib import Path
 from src.data.state_jwt import work_to_blt, state_blt
+from src.data.state_white_jwt import work_to_white
 
 module_logger = logging.getLogger('Work to JWT')
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
@@ -23,8 +24,20 @@ class JwtWorker:
         access = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.scr_key, algorithm=self.algoritm)
         refresh = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.scr_key, algorithm=self.algoritm)
         module_logger.info(f'Выдана новая пара токенов для {login}')
+        work_to_white.set_state(login, access)
+        work_to_white.set_state(login, refresh)
         return {'access': access,
                 'refresh': refresh}
+
+    def loging(self, access):
+        try:
+            payload = jwt.decode(access, self.scr_key, algorithms=self.algoritm)
+            if payload.get('login'):
+                return payload.get('login')
+        except jwt.ExpiredSignatureError:
+            return {'Error': 'ExpiredSignatureError'}
+        except jwt.InvalidTokenError:
+            return {'Error': 'InvalidTokenError'}
 
     def get_user_from_access(self, access):
         try:

@@ -6,3 +6,27 @@
 2024-09-28 20:39:12,127 - INFO - Set key 'bonas' with value '123' to sorage
 2024-09-28 20:39:19,626 - INFO - Set key 'bonas' with value '123123' to sorage
 2024-09-30 13:06:20,336 - INFO - Выдана новая пара токенов для Bona
+2024-09-30 14:32:14,517 - INFO - Set key 'bona' with value '['qweqwe', '23123123qwe']' to sorage
+2024-09-30 14:35:27,309 - INFO - Set key 'bona' with value '['qweqwe', '23123123qwe']' to sorage
+2024-09-30 14:47:43,851 - INFO - Set key 'bona' with value '['value', 'test']' to sorage
+2024-09-30 14:50:44,456 - INFO - Set key 'bona' with value '['value', 'test', 'asdasd']' to sorage
+2024-09-30 15:12:49,432 - DEBUG - Using proactor: IocpProactor
+2024-09-30 15:13:41,715 - INFO - Set key-login 'vika' with value-password '321' to sorage
+2024-09-30 15:21:57,257 - INFO - Выдана новая пара токенов для Bona
+2024-09-30 15:22:27,351 - INFO - Выдана новая пара токенов для Admin
+2024-09-30 15:25:35,342 - DEBUG - Using proactor: IocpProactor
+2024-09-30 15:27:16,198 - INFO - Выдана новая пара токенов для vika
+2024-09-30 15:27:16,198 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTIwOTZ9.HxYnSlxvhweKB2JrP3MqqvYuBg_dLtkhwnSQ2FqtSdw' to sorage
+2024-09-30 15:27:16,199 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTI2MzZ9.rko1HPD3P5gFCV2ennVNS-dWXMTWvfgt1JftNzgDkJ0' to sorage
+2024-09-30 15:30:15,973 - INFO - Выдана новая пара токенов для vika
+2024-09-30 15:30:15,974 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTIyNzV9.ufO1Y3NIfvnllYLCv3M6HWrH1_Oh3pV30Ij4bpZEPdQ' to sorage
+2024-09-30 15:30:15,974 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTI4MTV9.3aSdSa0ORN-FQogbRfbnL7m0JT_8-o-KTOMzN05Wy6Y' to sorage
+2024-09-30 15:31:17,428 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTI4MTV9.3aSdSa0ORN-FQogbRfbnL7m0JT_8-o-KTOMzN05Wy6Y' to sorage
+2024-09-30 15:31:17,429 - INFO - Выдана новая пара токенов для vika
+2024-09-30 15:31:17,429 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTIzMzd9.7JufP9yD-qPkqkEZ5_ScctQlMju2mhnCcbgjOA-ksM0' to sorage
+2024-09-30 15:31:17,430 - INFO - Set key 'vika' with value 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InZpa2EiLCJleHAiOjE3Mjc2OTI4Nzd9.cy6ssixXR51QM_2KWLw_VI0HWHvN21cEOWe_5xQkvV4' to sorage
+2024-09-30 15:34:01,016 - DEBUG - Using proactor: IocpProactor
+2024-09-30 15:34:45,757 - INFO - Set key-login 'qwe' with value-password '123' to sorage
+2024-09-30 15:41:39,946 - DEBUG - Using proactor: IocpProactor
+2024-09-30 15:41:53,801 - DEBUG - Using proactor: IocpProactor
+2024-09-30 15:41:57,158 - INFO - Set key-login 'qwe' with value-password '123' to sorage

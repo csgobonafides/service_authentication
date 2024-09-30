@@ -52,11 +52,17 @@ class State:
         self.state = storage.retrieve_state() or {}
 
     '''Сохраняет токен с ключем-логином'''
-    def set_state(self, key: str, value: str) -> None:
+    def set_state(self, key: str, value) -> None:
         if self.state.get(key):
-            self.state[key].append(value)
-            self.storage.save_state(self.state)
-            jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
+            if type(value) == list:
+                a = self.state.get(key) + value
+                self.state[key] = a
+                self.storage.save_state(self.state)
+                jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
+            else:
+                self.state[key].append(value)
+                self.storage.save_state(self.state)
+                jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
         else:
             self.state[key] = [value]
             self.storage.save_state(self.state)

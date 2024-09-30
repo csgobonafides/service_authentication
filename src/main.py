@@ -7,8 +7,8 @@ from models.processing_request import process_req
 app = FastAPI()
 
 
-@app.post('/registration')
-async def registration(user: User):
+@app.post('/registration', response_model=User)
+async def registration(user: User) -> User:
     return work_to_user.set_user(user.login, user.password)
 
 
@@ -20,9 +20,15 @@ async def authentication(user: User):
 @app.get('/exit')
 async def exit(request: Request):
     if process_req.access_head(request):
-        pass
+        return process_req.login_from_del(request)
     else:
         return process_req.access_head(request)
+
+
+@app.post('/examination')
+async def examination(request: Request):
+    return process_req.access_head(request)
+
 
 @app.post('/update_token')
 async def update_token(reauest: Request):

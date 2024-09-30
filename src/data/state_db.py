@@ -3,6 +3,7 @@ import json
 import logging
 from typing import Any, Optional
 from pathlib import Path
+from pydantic import BaseModel
 
 db_logger = logging.getLogger('State to db.')
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
@@ -10,14 +11,14 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 
 
-class User:
+class User(BaseModel):
     login: str
     password: str
 
 
 class BaseStorage:
     @abc.abstractmethod
-    def save_state(self, state: dict) -> None:
+    def save_state(self, state: dict):
         pass
 
     @abc.abstractmethod
@@ -30,9 +31,9 @@ class JsonFileStorage(BaseStorage):
         self.file_path = file_path
 
     '''Сохраняет данные в файл'''
-    def save_state(self, state: dict) -> None:
+    def save_state(self, state: dict):
         if self.file_path is None:
-            return
+            return False
 
         with open(self.file_path, 'w') as f:
             json.dump(state, f)
@@ -41,7 +42,7 @@ class JsonFileStorage(BaseStorage):
     def retrieve_state(self) -> Optional[dict]:
         if self.file_path is None:
             db_logger.warning('No state file provided. Continue with in-memory state')
-            return
+            return False
 
         try:
             with open(self.file_path, 'r') as f:

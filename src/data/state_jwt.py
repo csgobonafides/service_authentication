@@ -63,8 +63,11 @@ class State:
             jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
 
     '''Показывает токен по ключу-логину'''
-    def get_state(self, key: str) -> Any:
-        return self.state.get(key)
+    def get_state(self, refresh: str, key: str) -> Any:
+        if self.state.get(key) == None or refresh not in self.state.get(key):
+            return True
+        else:
+            return False
 
 
 dir = Path(__file__).parent.parent.parent

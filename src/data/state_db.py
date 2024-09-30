@@ -76,6 +76,12 @@ class Registration:
         else:
             return True
 
+    def check_psw(self, login: str, psw: str) -> Any:
+        if not self.chek_user(login) and self.state.get(login) == psw:
+            return True
+        else:
+            return False
+
 dir = Path(__file__).parent.parent.parent
 db_path = dir /'db.json'
 

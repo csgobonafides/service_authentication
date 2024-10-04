@@ -1,15 +1,10 @@
 import jwt
 from datetime import timedelta, datetime, timezone
 from pydantic import BaseModel
-import logging
 from pathlib import Path
 from src.data.state_jwt import work_to_blt, state_blt
 from src.data.state_white_jwt import work_to_white
 
-module_logger = logging.getLogger('Work to JWT')
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename=Path(__file__).parent.parent.parent /'example.log',
-                    level=logging.DEBUG)
 
 SECRET_KEY = 'secretkey'
 ALGORITM = 'HS256'
@@ -23,7 +18,6 @@ class JwtWorker:
     def creat_pair_jwt(self, login: str):
         access = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.scr_key, algorithm=self.algoritm)
         refresh = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.scr_key, algorithm=self.algoritm)
-        module_logger.info(f'Выдана новая пара токенов для {login}')
         work_to_white.set_state(login, access)
         work_to_white.set_state(login, refresh)
         return {'access': access,
@@ -60,7 +54,6 @@ class JwtWorker:
         except jwt.InvalidTokenError:
             return {'Error': 'InvalidTokenError'}
         else:
-            module_logger.warning(f'Попытка использовать рефреш токен повторно для {payload.get("login")}')
             return {'Error': 'Token to Black List.'}
 
 jwt_work = JwtWorker(SECRET_KEY, ALGORITM)

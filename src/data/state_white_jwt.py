@@ -1,14 +1,9 @@
 import abc
 import json
-import logging
 from typing import Any, Optional
 from pathlib import Path
 from src.data.state_jwt import work_to_blt
 
-module_logger = logging.getLogger('State to db.')
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename=Path(__file__).parent.parent.parent /'example.log',
-                    level=logging.DEBUG)
 
 
 class BaseStorage:
@@ -36,7 +31,6 @@ class JsonFileStorage(BaseStorage):
     '''Показывает данные всего файла'''
     def retrieve_state(self) -> Optional[dict]:
         if self.file_path is None:
-            module_logger.warning('No state file provided. Continue with in-memory state')
             return
 
         try:
@@ -58,11 +52,9 @@ class State:
         if self.state.get(key):
             self.state[key].append(value)
             self.storage.save_state(self.state)
-            module_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
         else:
             self.state[key] = [value]
             self.storage.save_state(self.state)
-            module_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
 
 
     def delet_tokens(self, login: str):

@@ -1,14 +1,8 @@
 import abc
 import json
-import logging
 from typing import Any, Optional
 from pathlib import Path
 from pydantic import BaseModel
-
-db_logger = logging.getLogger('State to db.')
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename=Path(__file__).parent.parent.parent /'example.log',
-                    level=logging.DEBUG)
 
 
 class User(BaseModel):
@@ -41,7 +35,6 @@ class JsonFileStorage(BaseStorage):
     '''Показывает данные всего файла'''
     def retrieve_state(self) -> Optional[dict]:
         if self.file_path is None:
-            db_logger.warning('No state file provided. Continue with in-memory state')
             return False
 
         try:
@@ -62,12 +55,10 @@ class Registration:
     '''Сохраняет логин и пороль в базе.'''
     def set_user(self, login: str, psw: str):
         if self.state.get(login):
-            db_logger.info(f'Пользователь с логином {login} уже зарегистрирован.')
             return {'message': 'Пользователь с таким логином уже зарегистрирован.'}
         else:
             self.state[login] = psw
             self.storage.save_state(self.state)
-            db_logger.info('Set key-login \'%s\' with value-password \'%s\' to sorage', login, psw)
             return {'message': 'Пользователь успешно зарегистрирован.'}
 
     '''Проверяет, есть ли уже такой пользователь.'''

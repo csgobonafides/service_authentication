@@ -3,9 +3,10 @@ from fastapi import FastAPI, Request
 from data.state_db import work_to_user, User
 from models.auth_user import user_auth
 from models.processing_request import process_req
+from src.middle_ware.time_meddle import time_middle
 
 app = FastAPI()
-
+app.middleware('http')(time_middle)
 
 @app.post('/registration')
 async def registration(user: User):
@@ -25,7 +26,7 @@ async def exit(request: Request):
         return process_req.access_head(request)
 
 
-@app.post('/examination')
+@app.get('/examination')
 async def examination(request: Request):
     return process_req.access_head(request)
 

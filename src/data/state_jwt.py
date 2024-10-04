@@ -1,13 +1,8 @@
 import abc
 import json
-import logging
 from typing import Any, Optional
 from pathlib import Path
 
-jwt_logger = logging.getLogger('State to black_token')
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename=Path(__file__).parent.parent.parent /'example.log',
-                    level=logging.DEBUG)
 
 class BaseStorage:
     @abc.abstractmethod
@@ -34,7 +29,6 @@ class JsonFileStorage(BaseStorage):
     '''Показывает данные всего файла'''
     def retrieve_state(self) -> Optional[dict]:
         if self.file_path is None:
-            jwt_logger.warning('No state file provided. Continue with in-memory state')
             return
 
         try:
@@ -58,15 +52,12 @@ class State:
                 a = self.state.get(key) + value
                 self.state[key] = a
                 self.storage.save_state(self.state)
-                jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
             else:
                 self.state[key].append(value)
                 self.storage.save_state(self.state)
-                jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
         else:
             self.state[key] = [value]
             self.storage.save_state(self.state)
-            jwt_logger.info('Set key \'%s\' with value \'%s\' to sorage', key, value)
 
     '''Показывает токен по ключу-логину'''
     def get_state(self, refresh: str, key: str) -> Any:

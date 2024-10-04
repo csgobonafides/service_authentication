@@ -37,7 +37,7 @@ class JwtWorker:
         try:
             payload = jwt.decode(access, self.scr_key, algorithms=self.algoritm)
             if payload.get('login'):
-                return True
+                return payload.get('login')
         except jwt.ExpiredSignatureError:
             return {'Error': 'ExpiredSignatureError'}
         except jwt.InvalidTokenError:

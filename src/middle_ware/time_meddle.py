@@ -1,6 +1,5 @@
 import asyncio
 from time import monotonic
-from time import monotonic
 from src.models.loggs import logger
 from typing import Callable
 from fastapi import FastAPI, Request

@@ -3,10 +3,10 @@ from fastapi import FastAPI, Request
 from data.state_db import work_to_user, User
 from models.auth_user import user_auth
 from models.processing_request import process_req
-from src.middle_ware.time_meddle import time_middle
+from src.middle_ware.time_meddle import MyMiddle
 
 app = FastAPI()
-app.middleware('http')(time_middle)
+app.add_middleware(MyMiddle)
 
 @app.post('/registration')
 async def registration(user: User):

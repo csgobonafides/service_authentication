@@ -63,6 +63,7 @@ class Registration:
 
     '''Проверяет, есть ли уже такой пользователь.'''
     def chek_user(self, login: str) -> Any:
+        self.state = self.storage.retrieve_state() or {}
         if self.state.get(login):
             return False
         else:

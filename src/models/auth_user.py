@@ -5,7 +5,7 @@ from src.models.work_to_jwt import jwt_work
 class OAuthentication:
 
     def auth_user(self, login, psw):
-        if not work_to_user.chek_user(login):
+        if work_to_user.chek_user(login) == False:
             if work_to_user.check_psw(login, psw):
                 return jwt_work.creat_pair_jwt(login)
             else:

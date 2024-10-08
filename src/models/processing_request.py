@@ -2,6 +2,7 @@ import asyncio
 from fastapi import Request
 from src.models.work_to_jwt import jwt_work
 from src.data.state_white_jwt import work_to_white
+from src._exceptions.to_except import UnauthorizedError
 
 class ProcessReque:
 
@@ -10,7 +11,8 @@ class ProcessReque:
             result = jwt_work.get_user_from_access(request.headers.get('authorization')[7:])
             return result
         else:
-            return {'error': 'Отсутствует токен.'}
+            raise UnauthorizedError('Token missing')
+            # return {'error': 'Отсутствует токен.'}
 
 
     def refresh_head(self, request: Request):
@@ -29,7 +31,8 @@ class ProcessReque:
             else:
                 return result
         else:
-            return {'error': 'Отсутствует токен.'}
+            raise UnauthorizedError('Token missing')
+            # return {'error': 'Отсутствует токен.'}
 
 
 process_req = ProcessReque()

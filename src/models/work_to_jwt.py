@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from pathlib import Path
 from src.data.state_jwt import work_to_blt, state_blt
 from src.data.state_white_jwt import work_to_white
+from src._exceptions.to_except import ForbiddenError
 
 
 SECRET_KEY = 'secretkey'
@@ -29,9 +30,11 @@ class JwtWorker:
             if payload.get('login'):
                 return payload.get('login')
         except jwt.ExpiredSignatureError:
-            return {'Error': 'ExpiredSignatureError'}
+            raise ForbiddenError('ExpiredSignatureError')
+            # return {'Error': 'ExpiredSignatureError'}
         except jwt.InvalidTokenError:
-            return {'Error': 'InvalidTokenError'}
+            raise ForbiddenError('InvalidTokenError')
+            # return {'Error': 'InvalidTokenError'}
 
     def get_user_from_access(self, access):
         try:
@@ -39,9 +42,11 @@ class JwtWorker:
             if payload.get('login'):
                 return payload.get('login')
         except jwt.ExpiredSignatureError:
-            return {'Error': 'ExpiredSignatureError'}
+            raise ForbiddenError('ExpiredSignatureError')
+            # return {'Error': 'ExpiredSignatureError'}
         except jwt.InvalidTokenError:
-            return {'Error': 'InvalidTokenError'}
+            raise ForbiddenError('InvalidTokenError')
+            # return {'Error': 'InvalidTokenError'}
 
     def get_user_from_refresh(self, refresh):
         try:
@@ -50,10 +55,13 @@ class JwtWorker:
                     work_to_blt.set_state(payload.get('login'), refresh)
                     return self.creat_pair_jwt(payload.get('login'))
         except jwt.ExpiredSignatureError:
-            return {'Error': 'ExpiredSignatureError'}
+            raise ForbiddenError('ExpiredSignatureError')
+            # return {'Error': 'ExpiredSignatureError'}
         except jwt.InvalidTokenError:
-            return {'Error': 'InvalidTokenError'}
+            raise ForbiddenError('InvalidTokenError')
+            # return {'Error': 'InvalidTokenError'}
         else:
-            return {'Error': 'Token to Black List.'}
+            raise ForbiddenError('Token to Black List.')
+            # return {'Error': 'Token to Black List.'}
 
 jwt_work = JwtWorker(SECRET_KEY, ALGORITM)

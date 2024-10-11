@@ -10,7 +10,7 @@ class User(BaseModel):
     password: str
 
 
-class BaseStorage:
+class BaseStorageDB:
     @abc.abstractmethod
     def save_state(self, state: dict):
         pass
@@ -20,7 +20,7 @@ class BaseStorage:
         pass
 
 
-class JsonFileStorage(BaseStorage):
+class JsonFileStorage(BaseStorageDB):
     def __init__(self, file_path: Optional[str] = None):
         self.file_path = file_path
 
@@ -48,7 +48,7 @@ class JsonFileStorage(BaseStorage):
 
 '''Registration User to Data Base'''
 class Registration:
-    def __init__(self, storage: BaseStorage):
+    def __init__(self, storage: BaseStorageDB):
         self.storage = storage
         self.state = storage.retrieve_state() or {}
 
@@ -63,10 +63,10 @@ class Registration:
 
     '''Проверяет, есть ли уже такой пользователь.'''
     def chek_user(self, login: str) -> Any:
-        self.state = self.storage.retrieve_state() or {}
         if self.state.get(login):
             return False
         else:
+            print(self.state)
             return True
 
     def check_psw(self, login: str, psw: str) -> Any:
@@ -75,8 +75,7 @@ class Registration:
         else:
             return False
 
-dir = Path(__file__).parent.parent.parent
-db_path = dir /'db.json'
-
-state_db = JsonFileStorage(db_path)
-work_to_user = Registration(state_db)
+# dir = Path(__file__).parent.parent.parent
+# db_path = dir /'db.json'
+# state_db = JsonFileStorage(db_path)
+# work_to_user = Registration(state_db)

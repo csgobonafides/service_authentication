@@ -2,7 +2,7 @@ import jwt
 from datetime import timedelta, datetime, timezone
 from pydantic import BaseModel
 from pathlib import Path
-from src.data.state_jwt import work_to_blt, state_blt
+# from src.data.state_jwt import work_to_blt, state_blt
 from src.data.state_white_jwt import work_to_white
 from src._exceptions.to_except import ForbiddenError
 

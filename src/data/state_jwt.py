@@ -14,7 +14,7 @@ class BaseStorage:
         pass
 
 
-class JsonFileStorage(BaseStorage):
+class JsonFileStorageJWT(BaseStorage):
     def __init__(self, file_path: Optional[str] = None):
         self.file_path = file_path
 
@@ -67,8 +67,7 @@ class State:
             return False
 
 
-dir = Path(__file__).parent.parent.parent
-blt_path = dir /'black_token.json'
-
-state_blt = JsonFileStorage(blt_path)
-work_to_blt = State(state_blt)
+# dir = Path(__file__).parent.parent.parent
+# blt_path = dir /'black_token.json'
+# state_blt = JsonFileStorage(blt_path)
+# work_to_blt = State(state_blt)

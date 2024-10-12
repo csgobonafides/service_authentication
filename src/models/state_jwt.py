@@ -40,7 +40,7 @@ class JsonFileStorageJWT(BaseStorage):
         return
 
 
-class State:
+class StateJWT(BaseStorage):
     def __init__(self, storage: BaseStorage):
         self.storage = storage
         self.state = storage.retrieve_state() or {}
@@ -67,7 +67,8 @@ class State:
             return False
 
 
+
 # dir = Path(__file__).parent.parent.parent
 # blt_path = dir /'black_token.json'
-# state_blt = JsonFileStorage(blt_path)
-# work_to_blt = State(state_blt)
+# state_blt = JsonFileStorageJWT(dir /'black_token.json')
+# work_to_blt = StateJWT(state_blt)

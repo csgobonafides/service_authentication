@@ -2,7 +2,6 @@ import abc
 import json
 from typing import Any, Optional
 from pathlib import Path
-from src.data.state_jwt import work_to_blt
 
 
 
@@ -16,7 +15,7 @@ class BaseStorage:
         pass
 
 
-class JsonFileStorage(BaseStorage):
+class JsonFileStorageWJWT(BaseStorage):
     def __init__(self, file_path: Optional[str] = None):
         self.file_path = file_path
 
@@ -42,7 +41,7 @@ class JsonFileStorage(BaseStorage):
         return
 
 
-class State:
+class StateWJWT:
     def __init__(self, storage: BaseStorage):
         self.storage = storage
         self.state = storage.retrieve_state() or {}
@@ -59,16 +58,16 @@ class State:
 
     def delet_tokens(self, login: str):
         if self.state.get(login):
-            work_to_blt.set_state(login, self.state.get(login))
+            list_tokens = self.state.get(login)
             self.state.get(login).clear()
             self.storage.save_state(self.state)
+            return list_tokens
         else:
             return None
 
 
 
-dir = Path(__file__).parent.parent.parent
-white_path = dir /'white_token.json'
-
-state_white = JsonFileStorage(white_path)
-work_to_white = State(state_white)
+# dir = Path(__file__).parent.parent.parent
+# white_path = dir /'white_token.json'
+# state_white = JsonFileStorageWJWT(dir /'white_token.json')
+# work_to_white = StateWJWT(state_white)

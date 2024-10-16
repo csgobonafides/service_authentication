@@ -2,32 +2,38 @@ import jwt
 from datetime import timedelta, datetime, timezone
 from src._exceptions.to_except import ForbiddenError, UnauthorizedError
 from fastapi import Request
+from src.models.base import JsonFileStorage
 
 class Conntroller:
     SECRET_KEY = 'secretkey'
     ALGORITM = 'HS256'
-    def __init__(self, state1, state2, state3):
-        self.user_db = state1
-        self.blt_jwt = state2
-        self.white_jwt = state3
+    def __init__(self, user_db, black_jwt, white_jwt):
+        self.user_db: JsonFileStorage = user_db
+        self.black_jwt: JsonFileStorage = black_jwt
+        self.white_jwt: JsonFileStorage = white_jwt
 
-    def registr(self, login: str, psw: str):
-        return self.user_db.set_user(login, psw)
+    async def registr(self, login: str, psw: str):
+        await self.user_db.add(login, psw)
+        await self.white_jwt.add(login, [])
+        await self.black_jwt.add(login, [])
+        return {'status': '200'}
 
-    def authentication(self, login: str, psw: str):
-        if self.user_db.chek_user(login) == False:
-            if self.user_db.check_psw(login, psw):
-                return self.creat_pair_jwt(login)
+    async def authentication(self, login: str, psw: str):
+        if await self.user_db.get(login):
+            if await self.user_db.get(login) == psw:
+                return await self.creat_pair_jwt(login)
             else:
                 return {'error': 'Пороль не верный'}
         else:
             return {'error': 'Пользователь с таким логином не зарегистрирован.'}
 
-    def creat_pair_jwt(self, login: str):
+    async def creat_pair_jwt(self, login: str):
         access = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.SECRET_KEY, algorithm=self.ALGORITM)
         refresh = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.SECRET_KEY, algorithm=self.ALGORITM)
-        self.white_jwt.set_state(login, access)
-        self.white_jwt.set_state(login, refresh)
+        tokens = [access]
+        a = await self.white_jwt.get(login)
+        result = tokens + a
+        await self.white_jwt.update(login, result)
         return {'access': access,
                 'refresh': refresh}
 
@@ -41,22 +47,28 @@ class Conntroller:
         except jwt.InvalidTokenError:
             raise ForbiddenError('InvalidTokenError')
 
-    def get_user_from_access(self, access):
+    async def get_user_from_access(self, access):
         try:
             payload = jwt.decode(access, self.SECRET_KEY, algorithms=self.ALGORITM)
-            if payload.get('login'):
+            if access not in await self.black_jwt.get(payload.get('login')):
                 return payload.get('login')
         except jwt.ExpiredSignatureError:
             raise ForbiddenError('ExpiredSignatureError')
         except jwt.InvalidTokenError:
             raise ForbiddenError('InvalidTokenError')
 
-    def get_user_from_refresh(self, refresh):
+    async def get_user_from_refresh(self, refresh):
         try:
             payload = jwt.decode(refresh, self.SECRET_KEY, algorithms=self.ALGORITM)
-            if self.blt_jwt.get_state(refresh, payload.get('login')):
-                    self.blt_jwt.set_state(payload.get('login'), refresh)
-                    return self.creat_pair_jwt(payload.get('login'))
+            if await self.black_jwt.get(payload.get('login')) == [] or refresh not in await self.black_jwt.get(payload.get('login')):
+                wt = await self.white_jwt.get(payload.get('login'))
+                bl = await self.black_jwt.get(payload.get('login'))
+                print(wt, bl)
+                all = wt + bl
+                alll = all.append(refresh)
+                await self.black_jwt.update(payload.get('login'), all)
+                await self.white_jwt.delete_value(payload.get('login'))
+                return await self.creat_pair_jwt(payload.get('login'))
         except jwt.ExpiredSignatureError:
             raise ForbiddenError('ExpiredSignatureError')
         except jwt.InvalidTokenError:
@@ -79,13 +91,16 @@ class Conntroller:
         else:
             raise UnauthorizedError('Token missing')
 
-    def login_from_del(self, request):
+    async def login_from_del(self, request):
         if request.headers.get('authorization'):
             result_log = self.loging(request.headers.get('authorization')[7:])
             if result_log != {'Error': 'ExpiredSignatureError'} and result_log != {'Error': 'InvalidTokenError'}:
-                list_tokens = self.white_jwt.delet_tokens(result_log)
-                self.blt_jwt.set_state(result_log, list_tokens)
-                return True
+                wt = await self.white_jwt.get(result_log)
+                bl = await self.black_jwt.get(result_log)
+                all = wt + bl
+                await self.black_jwt.update(result_log, all)
+                await self.white_jwt.delete_value(result_log)
+                return {'status': '200'}
             else:
                 return result_log
         else:

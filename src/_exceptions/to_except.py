@@ -20,3 +20,7 @@ class ForbiddenError(BaseResponseError):
 class NotFoundError(BaseResponseError):
     message_code = 'not_found_error'
     status_code = status.HTTP_404_NOT_FOUND
+
+class BadRequestError(BaseResponseError):
+    message_code = 'bad_request_error'
+    status_code = status.HTTP_400_BAD_REQUEST

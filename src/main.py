@@ -1,9 +1,7 @@
-import asyncio
-from typing import Any, Optional
 from pathlib import Path
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI
 from src.middle_ware.time_meddle import MyMiddle
-from src.models.base import JsonFileStorage
+from src.storages.jsonfilestorage import JsonFileStorage
 from contextlib import asynccontextmanager
 from src.api.routs import router
 

@@ -2,7 +2,7 @@ import jwt
 from datetime import timedelta, datetime, timezone
 from src._exceptions.to_except import ForbiddenError, UnauthorizedError
 from fastapi import Request
-from src.models.base import JsonFileStorage
+from src.storages.jsonfilestorage import JsonFileStorage
 
 class Conntroller:
     SECRET_KEY = 'secretkey'

@@ -1,13 +1,21 @@
 version: '3.4'
 
 services:
-  app:
-    container_name: my_service
-    build: ./
-    volumes:
-      - ./src:/src
-    ports:
-      - ${APP_HOST_PORT}:8000
+  redis:
+    image: 'redis:alpine'
+    container_name: redis
     restart: always
-    env_file:
-      - .env
+    volumes:
+      - redis-data:/data
+    ports:
+      - '6379:6379'
+
+  app:
+    container_name: app
+    build: ./
+    ports:
+      - '8000:8000'
+    restart: always
+
+volumes:
+  redis-data:

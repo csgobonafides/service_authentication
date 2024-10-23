@@ -5,12 +5,12 @@ from src.controllers.controler import get_controller
 router = APIRouter()
 
 @router.post('/registration')
-async def registration(user: User, controller = Depends(get_controller)):
+async def registration(user: User, request: Request, controller = Depends(get_controller)):
     return await controller.registr(user.login, user.password)
 
 
 @router.post('/authentication')
-async def authentication(user: User, controller = Depends(get_controller)):
+async def authentication(user: User, request: Request, controller = Depends(get_controller)):
     return await controller.authentication(user.login, user.password)
 
 

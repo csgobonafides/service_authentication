@@ -3,37 +3,37 @@ from datetime import timedelta, datetime, timezone
 from src._exceptions.to_except import ForbiddenError, UnauthorizedError
 from fastapi import Request
 from src.storages.jsonfilestorage import JsonFileStorage
+from src.storages.redisstorage import RedisStorage
 
 class Conntroller:
     SECRET_KEY = 'secretkey'
     ALGORITM = 'HS256'
-    def __init__(self, user_db, black_jwt, white_jwt):
+    def __init__(self, user_db, redis_db):
         self.user_db: JsonFileStorage = user_db
-        self.black_jwt: JsonFileStorage = black_jwt
-        self.white_jwt: JsonFileStorage = white_jwt
+        self.redis_db: RedisStorage = redis_db
 
     async def registr(self, login: str, psw: str):
-        await self.user_db.add(login, psw)
-        await self.white_jwt.add(login, [])
-        await self.black_jwt.add(login, [])
+        id = await self.user_db.get('id')
+        id = str(int(id) + 1)
+        await self.user_db.update('id', id)
+        await self.user_db.add(login, [id, psw])
         return {'status': '200'}
 
-    async def authentication(self, login: str, psw: str):
+    async def authentication(self, login: str, psw: str, request: Request):
         if await self.user_db.get(login):
-            if await self.user_db.get(login) == psw:
-                return await self.creat_pair_jwt(login)
+            data = await self.user_db.get(login)
+            if data[1] == psw:
+                us_ag = request.headers.get('User-Agent')
+                return await self.creat_pair_jwt(login, data[0], us_ag)
             else:
                 return {'error': 'Пороль не верный'}
         else:
             return {'error': 'Пользователь с таким логином не зарегистрирован.'}
 
-    async def creat_pair_jwt(self, login: str):
-        access = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.SECRET_KEY, algorithm=self.ALGORITM)
-        refresh = jwt.encode({'login': login, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.SECRET_KEY, algorithm=self.ALGORITM)
-        tokens = [access]
-        a = await self.white_jwt.get(login)
-        result = tokens + a
-        await self.white_jwt.update(login, result)
+    async def creat_pair_jwt(self, login: str, user_id: str, user_agent: str):
+        access = jwt.encode({'login': login, 'id': id, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.SECRET_KEY, algorithm=self.ALGORITM)
+        refresh = jwt.encode({'login': login, 'id': id, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.SECRET_KEY, algorithm=self.ALGORITM)
+        await self.redis_db.add(user_id, access, refresh, user_agent)
         return {'access': access,
                 'refresh': refresh}
 
@@ -50,25 +50,22 @@ class Conntroller:
     async def get_user_from_access(self, access):
         try:
             payload = jwt.decode(access, self.SECRET_KEY, algorithms=self.ALGORITM)
-            if access not in await self.black_jwt.get(payload.get('login')):
+            if await self.redis_db.get(access):
                 return payload.get('login')
         except jwt.ExpiredSignatureError:
             raise ForbiddenError('ExpiredSignatureError')
         except jwt.InvalidTokenError:
             raise ForbiddenError('InvalidTokenError')
+        else:
+            raise ValueError('Token missing')
 
-    async def get_user_from_refresh(self, refresh):
+    async def get_user_from_refresh(self, refresh, request: Request):
         try:
             payload = jwt.decode(refresh, self.SECRET_KEY, algorithms=self.ALGORITM)
-            if await self.black_jwt.get(payload.get('login')) == [] or refresh not in await self.black_jwt.get(payload.get('login')):
-                wt = await self.white_jwt.get(payload.get('login'))
-                bl = await self.black_jwt.get(payload.get('login'))
-                print(wt, bl)
-                all = wt + bl
-                alll = all.append(refresh)
-                await self.black_jwt.update(payload.get('login'), all)
-                await self.white_jwt.delete_value(payload.get('login'))
-                return await self.creat_pair_jwt(payload.get('login'))
+            if await self.redis_db.update():
+                user_ag = request.headers.get('User-Agent')
+                user_id = payload.get('id')
+                return await self.creat_pair_jwt(payload.get('login'), user_id, user_ag)
         except jwt.ExpiredSignatureError:
             raise ForbiddenError('ExpiredSignatureError')
         except jwt.InvalidTokenError:
@@ -77,16 +74,16 @@ class Conntroller:
             raise ForbiddenError('Token to Black List.')
 
 
-    def access_head(self, request: Request):
+    async def access_head(self, request: Request):
         if request.headers.get('authorization'):
-            result = self.get_user_from_access(request.headers.get('authorization')[7:])
+            result = await self.get_user_from_access(request.headers.get('authorization')[7:], request)
             return result
         else:
             raise UnauthorizedError('Token missing')
 
-    def refresh_head(self, request: Request):
+    async def refresh_head(self, request: Request):
         if request.headers.get('refresh'):
-            result = self.get_user_from_refresh(request.headers.get('refresh'))
+            result = await self.get_user_from_refresh(request.headers.get('refresh'))
             return result
         else:
             raise UnauthorizedError('Token missing')
@@ -95,12 +92,12 @@ class Conntroller:
         if request.headers.get('authorization'):
             result_log = self.loging(request.headers.get('authorization')[7:])
             if result_log != {'Error': 'ExpiredSignatureError'} and result_log != {'Error': 'InvalidTokenError'}:
-                wt = await self.white_jwt.get(result_log)
-                bl = await self.black_jwt.get(result_log)
-                all = wt + bl
-                await self.black_jwt.update(result_log, all)
-                await self.white_jwt.delete_value(result_log)
-                return {'status': '200'}
+                payload = jwt.decode(request.headers.get('authorization')[7:], self.SECRET_KEY, algorithms=self.ALGORITM)
+                user_id = payload.get('id')
+                if await self.redis_db.delete(user_id):
+                    return {'status': '200'}
+                else:
+                    raise ValueError("Что то не так")
             else:
                 return result_log
         else:

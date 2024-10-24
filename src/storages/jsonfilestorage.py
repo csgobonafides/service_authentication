@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 import json
-from src._exceptions.to_except import BadRequestError
+from src._exceptions.to_except import NotFoundError, ForbiddenError
 from src.storages.base import CacheStorage
 
 
@@ -25,25 +25,25 @@ class JsonFileStorage(CacheStorage):
 
     async def add(self, key: str, value: Any) -> None:
         if key in self.data:
-            raise BadRequestError('Ключ уже существует.')
+            raise ForbiddenError('Ключ уже существует.')
         self.data[key] = value
 
     async def get(self, key: str):
         if key not in self.data:
-            raise ValueError("Такого ключа не найдено.")
+            raise NotFoundError("Такого ключа не найдено.")
         return self.data[key]
 
     async def update(self, key: str, value: Any) -> None:
         if key not in self.data:
-            raise ValueError('Такого ключа не найдено.')
+            raise NotFoundError('Такого ключа не найдено.')
         self.data[key] = value
 
     async def delete(self, key: str) -> None:
         if key not in self.data:
-            raise ValueError('Такого ключа не найдено.')
+            raise NotFoundError('Такого ключа не найдено.')
         self.data.pop(key)
 
     async def delete_value(self, key: str) -> None:
         if key not in self.data:
-            raise ValueError('Такого ключа не найдено.')
+            raise NotFoundError('Такого ключа не найдено.')
         self.data[key].clear()

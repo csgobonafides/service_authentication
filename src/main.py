@@ -14,7 +14,7 @@ async def lifespan(_app: FastAPI):
     dir = Path(__file__).parent.parent
     user_db = JsonFileStorage(dir /'db.json')
     redis_db = RedisStorage()
-    await redis_db.connect()
+    redis_db.connect()
     await user_db.connect()
     c.controller = c.Conntroller(user_db, redis_db)
     yield

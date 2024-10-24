@@ -11,7 +11,7 @@ async def registration(user: User, request: Request, controller = Depends(get_co
 
 @router.post('/authentication')
 async def authentication(user: User, request: Request, controller = Depends(get_controller)):
-    return await controller.authentication(user.login, user.password)
+    return await controller.authentication(user.login, user.password, request)
 
 
 @router.get('/exit')

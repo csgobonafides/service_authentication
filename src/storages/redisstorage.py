@@ -69,10 +69,10 @@ class RedisStorage(CacheStorage):
 
         user_tokens[user_agent] = refresh_jwt
 
-        pipeline.setex(user_id, REFRESH_EXPIRES, json.dumps(user_tokens))
-        pipeline.setex(access_jwt, ACCESS_EXPIRES, refresh_jwt)
-        pipeline.setex(refresh_jwt, REFRESH_EXPIRES, access_jwt)
-        pipeline.execute()
+        await pipeline.setex(user_id, REFRESH_EXPIRES, json.dumps(user_tokens))
+        await pipeline.setex(access_jwt, ACCESS_EXPIRES, refresh_jwt)
+        await pipeline.setex(refresh_jwt, REFRESH_EXPIRES, access_jwt)
+        await pipeline.execute()
         return True
 
 

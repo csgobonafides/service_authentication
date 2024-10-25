@@ -283,3 +283,5 @@ DEBUG (23/10/2024 14:33:37): Using proactor: IocpProactor (Line: 630) [proactor_
 INFO (23/10/2024 14:33:49): запрос эндпоинту - registration - обработан за 15.000000|ms. (Line: 15) [time_meddle.py]
 DEBUG (23/10/2024 16:17:53): Using proactor: IocpProactor (Line: 630) [proactor_events.py]
 INFO (23/10/2024 16:17:59): запрос эндпоинту - authentication - обработан за 0.000000|ms. (Line: 15) [time_meddle.py]
+DEBUG (24/10/2024 23:27:33): Using proactor: IocpProactor (Line: 630) [proactor_events.py]
+DEBUG (24/10/2024 23:28:51): Using proactor: IocpProactor (Line: 630) [proactor_events.py]

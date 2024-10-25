@@ -17,5 +17,12 @@ services:
       - '8000:8000'
     restart: always
 
+  app2:
+    container_name: app2
+    build: ../service_parsis
+    ports:
+      - '8001:8001'
+    restart: always
+
 volumes:
   redis-data:

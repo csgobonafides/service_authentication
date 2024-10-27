@@ -4,10 +4,14 @@ from src._exceptions.to_except import ForbiddenError, UnauthorizedError, NotFoun
 from fastapi import Request
 from src.storages.jsonfilestorage import JsonFileStorage
 from src.storages.redisstorage import RedisStorage
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Conntroller:
-    SECRET_KEY = 'secretkey'
-    ALGORITM = 'HS256'
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    ALGORITM = os.getenv('ALGORITM')
     def __init__(self, user_db, redis_db):
         self.user_db: JsonFileStorage = user_db
         self.redis_db: RedisStorage = redis_db

@@ -1,14 +1,13 @@
-from pathlib import Path
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from src.middleware.time_meddle import MyMiddle
-from src.core.settings import get_settings
-from src.storages.redisstorage import RedisStorage
-from src.api.routs import router
-from src.db.connector import DatabaseConnector
+from middleware.time_meddle import MyMiddle
+from core.settings import get_settings
+from storages.redisstorage import RedisStorage
+from api.routs import router
+from db.connector import DatabaseConnector
 
-import src.controllers.controler as c
+import controllers.controler as c
 
 config = get_settings()
 

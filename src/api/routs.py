@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Response
 
-from src.schemas.users_schema import User
-from src.controllers.controler import get_controller
+from schemas.users_schema import User
+from controllers.controler import get_controller
 
 router = APIRouter()
 

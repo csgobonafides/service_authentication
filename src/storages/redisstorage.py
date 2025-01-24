@@ -1,8 +1,8 @@
-from src.storages.base import CacheStorage
+from storages.base import CacheStorage
 import redis.asyncio as redis
 import json
 
-from src.core.exceptions import NotFoundError, ForbiddenError, UnauthorizedError
+from core.exceptions import NotFoundError, ForbiddenError, UnauthorizedError
 
 REFRESH_EXPIRES = 600
 ACCESS_EXPIRES = 60

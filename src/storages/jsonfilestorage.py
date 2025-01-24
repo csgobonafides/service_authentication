@@ -1,7 +1,7 @@
 from typing import Any
 import json
-from src.core.exceptions import NotFoundError, ForbiddenError
-from src.storages.base import CacheStorage
+from core.exceptions import NotFoundError, ForbiddenError
+from storages.base import CacheStorage
 
 
 class JsonFileStorage(CacheStorage):

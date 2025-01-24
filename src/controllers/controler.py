@@ -4,9 +4,9 @@ import os
 from dotenv import load_dotenv
 from fastapi import Request
 
-from src.core.exceptions import ForbiddenError, UnauthorizedError, NotFoundError
-from src.storages.jsonfilestorage import JsonFileStorage
-from src.storages.redisstorage import RedisStorage
+from core.exceptions import ForbiddenError, UnauthorizedError, NotFoundError
+from storages.jsonfilestorage import JsonFileStorage
+from storages.redisstorage import RedisStorage
 
 load_dotenv()
 

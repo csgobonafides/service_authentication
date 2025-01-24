@@ -1,9 +1,10 @@
-import asyncio
 from time import monotonic
-from src.loggings.loggs import logger
+import logging
 from typing import Callable
-from fastapi import FastAPI, Request
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
+
+logger = logging.getLogger(__name__)
 
 
 class MyMiddle(BaseHTTPMiddleware):

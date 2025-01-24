@@ -10,19 +10,26 @@ services:
     ports:
       - '6379:6379'
 
-  app:
-    container_name: app
+  authentication:
+    container_name: authentication
     build: ./
     ports:
       - '8000:8000'
     restart: always
 
-  app2:
-    container_name: app2
-    build: ../service_parsis
+  auth_db:
+    image: postgres:latest
+    container_name: auth_db
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_PORT: 5432
     ports:
-      - '8001:8001'
-    restart: always
+      - "6432:5432"
+    volumes:
+      - authdata:/var/lib/postgresql/data
 
 volumes:
   redis-data:
+  authdata:

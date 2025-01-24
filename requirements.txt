@@ -19,3 +19,9 @@ starlette==0.38.6
 typing_extensions==4.12.2
 uvicorn==0.31.0
 wheel==0.41.2
+SQLAlchemy==2.0.37
+pydantic-settings==2.7.1
+alembic==1.14.1
+asyncpg==0.30.0
+psycopg2-binary==2.9.10
+psycopg2==2.9.10

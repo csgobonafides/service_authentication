@@ -1,13 +1,15 @@
 import jwt
 from datetime import timedelta, datetime, timezone
-from src._exceptions.to_except import ForbiddenError, UnauthorizedError, NotFoundError
-from fastapi import Request
-from src.storages.jsonfilestorage import JsonFileStorage
-from src.storages.redisstorage import RedisStorage
 import os
 from dotenv import load_dotenv
+from fastapi import Request
+
+from src.core.exceptions import ForbiddenError, UnauthorizedError, NotFoundError
+from src.storages.jsonfilestorage import JsonFileStorage
+from src.storages.redisstorage import RedisStorage
 
 load_dotenv()
+
 
 class Conntroller:
     SECRET_KEY = os.getenv('SECRET_KEY')
@@ -36,7 +38,7 @@ class Conntroller:
         else:
             raise UnauthorizedError('user not found')
 
-    async def creat_pair_jwt(self, login: str, user_id: str):
+    async def creat_pair_jwt(self, login: str, user_id: str) -> list:
         access = jwt.encode({'login': login, 'id': user_id, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.SECRET_KEY, algorithm=self.ALGORITM)
         refresh = jwt.encode({'login': login, 'id': user_id, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.SECRET_KEY, algorithm=self.ALGORITM)
         return [access, refresh]
@@ -110,10 +112,8 @@ class Conntroller:
 
 controller = None
 
+
 def get_controller():
     if controller is None:
         raise ForbiddenError('Controller is none.')
     return controller
-
-
-

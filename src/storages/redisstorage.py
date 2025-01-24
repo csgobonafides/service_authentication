@@ -1,11 +1,12 @@
 from src.storages.base import CacheStorage
 import redis.asyncio as redis
-from typing import Any
 import json
-from src._exceptions.to_except import BadRequestError, NotFoundError, ForbiddenError, UnauthorizedError
+
+from src.core.exceptions import NotFoundError, ForbiddenError, UnauthorizedError
 
 REFRESH_EXPIRES = 600
 ACCESS_EXPIRES = 60
+
 
 class RedisStorage(CacheStorage):
 
@@ -34,7 +35,7 @@ class RedisStorage(CacheStorage):
         await self._revoke_token(jwt, pipeline, refresh=refresh)
         await pipeline.execute()
 
-    async def add(self, user_id: str, access_jwt: str, refresh_jwt: str, user_agent: str) -> None:
+    async def add(self, user_id: str, access_jwt: str, refresh_jwt: str, user_agent: str) -> bool:
         user_tokens = json.loads(await self.redis.get(user_id) or '{}')
         pipeline = await self.redis.pipeline()
         old_token = user_tokens.get(user_agent)
@@ -47,7 +48,6 @@ class RedisStorage(CacheStorage):
         await pipeline.setex(refresh_jwt, REFRESH_EXPIRES, access_jwt)
         await pipeline.execute()
         return True
-
 
     async def get(self, jwt: str):
         if not await self.redis.get(jwt):
@@ -74,7 +74,6 @@ class RedisStorage(CacheStorage):
         await pipeline.setex(refresh_jwt, REFRESH_EXPIRES, access_jwt)
         await pipeline.execute()
         return True
-
 
     async def delete(self, user_id: str):
         user_tokens = json.loads(await self.redis.get(user_id) or '{}')

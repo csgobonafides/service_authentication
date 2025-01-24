@@ -1,30 +1,30 @@
 from pathlib import Path
 from fastapi import FastAPI
-from src.middle_ware.time_meddle import MyMiddle
-from src.storages.jsonfilestorage import JsonFileStorage
-from src.storages.redisstorage import RedisStorage
 from contextlib import asynccontextmanager
-from src.api.routs import router
 
+from src.middleware.time_meddle import MyMiddle
+from src.core.settings import get_settings
+from src.storages.redisstorage import RedisStorage
+from src.api.routs import router
+from src.db.connector import DatabaseConnector
 
 import src.controllers.controler as c
 
+config = get_settings()
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    dir = Path(__file__).parent.parent
-    user_db = JsonFileStorage(dir /'db.json')
+    db = DatabaseConnector(config.DB.asyncpg_url)
     redis_db = RedisStorage()
     redis_db.connect()
-    await user_db.connect()
-    c.controller = c.Conntroller(user_db, redis_db)
+    c.controller = c.Conntroller(db, redis_db)
     yield
-    await user_db.disconnect()
     await redis_db.disconnect()
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(MyMiddle)
 app.include_router(router)
-
 
 
 if __name__ == '__main__':

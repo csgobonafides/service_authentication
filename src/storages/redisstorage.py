@@ -16,16 +16,28 @@ class RedisStorage(CacheStorage):
         self.port = port
 
     def connect(self):
-        self.redis = redis.Redis(host=self.host, port=self.port, db=0)
+        self.redis = redis.Redis(
+            host=self.host,
+            port=self.port,
+            db=0
+        )
 
     async def disconnect(self):
         await self.redis.aclose()
 
-    async def _revoke_token(self, jwt: str, pipeline: redis.client.Pipeline, refresh: bool) -> None:
+    async def _revoke_token(self,
+                            jwt: str,
+                            pipeline:
+                            redis.client.Pipeline,
+                            refresh: bool
+                            ) -> None:
         expires = REFRESH_EXPIRES if refresh else ACCESS_EXPIRES
         await pipeline.setex(jwt, expires, 'black')
 
-    async def revoke_token(self, jwt: str, refresh: bool = False):
+    async def revoke_token(self,
+                           jwt: str,
+                           refresh: bool = False
+                           ) -> None:
         pair_jwt = await self.redis.get(jwt)
         pipeline = self.redis.pipeline()
 
@@ -35,7 +47,12 @@ class RedisStorage(CacheStorage):
         await self._revoke_token(jwt, pipeline, refresh=refresh)
         await pipeline.execute()
 
-    async def add(self, user_id: str, access_jwt: str, refresh_jwt: str, user_agent: str) -> bool:
+    async def add(self,
+                  user_id: str,
+                  access_jwt: str,
+                  refresh_jwt: str,
+                  user_agent: str
+                  ) -> bool:
         user_tokens = json.loads(await self.redis.get(user_id) or '{}')
         pipeline = await self.redis.pipeline()
         old_token = user_tokens.get(user_agent)
@@ -49,21 +66,26 @@ class RedisStorage(CacheStorage):
         await pipeline.execute()
         return True
 
-    async def get(self, jwt: str):
+    async def get(self, jwt: str) -> bool:
         if not await self.redis.get(jwt):
-            raise NotFoundError('Такого ключа не найдено')
+            raise NotFoundError('No such key found.')
         if await self.redis.get(jwt) == b'black':
-            raise ForbiddenError('Токен в черном списке')
+            raise ForbiddenError('Token is blacklisted.')
         else:
             return True
 
-    async def update(self, user_id: str, access_jwt: str, refresh_jwt: str, user_agent: str):
+    async def update(self,
+                     user_id: str,
+                     access_jwt: str,
+                     refresh_jwt: str,
+                     user_agent: str
+                     ) -> bool:
         user_tokens = json.loads(await self.redis.get(user_id) or '{}')
 
         pipeline = await self.redis.pipeline()
         old_refresh = user_tokens.get(user_agent)
         if old_refresh and await self.redis.get(old_refresh) == b'black':
-            raise ForbiddenError('Токен в черном списке')
+            raise ForbiddenError('Token is blacklisted.')
         if old_refresh and await self.redis.get(old_refresh) != b'black':
             await self.revoke_token(old_refresh, refresh=True)
 
@@ -75,7 +97,7 @@ class RedisStorage(CacheStorage):
         await pipeline.execute()
         return True
 
-    async def delete(self, user_id: str):
+    async def delete(self, user_id: str) -> bool:
         user_tokens = json.loads(await self.redis.get(user_id) or '{}')
         pipeline = await self.redis.pipeline()
         if user_tokens != {}:
@@ -85,4 +107,4 @@ class RedisStorage(CacheStorage):
             await pipeline.execute()
             return True
         else:
-            raise UnauthorizedError('Not authentication')
+            raise UnauthorizedError('Not authentication.')

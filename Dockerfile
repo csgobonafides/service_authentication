@@ -4,7 +4,7 @@ WORKDIR /service_authentication
 
 ENV TZ 'UTC'
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 RUN apt update \
     && apt install -y gcc bash \
@@ -14,6 +14,6 @@ COPY requirements.txt requirements.txt
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY ./src .
 
-ENTRYPOINT "uvicorn" "src.main:app" "--host" "0.0.0.0" "--port" "8000"
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--log-config", "core/logging.yaml"]

@@ -1,15 +1,15 @@
 from sqlalchemy import create_engine
 from alembic import context
-from src.db.models_table import UserModel
+from src.db.models_table import BaseModel
 from src.core.settings import get_settings
 
 settings = get_settings()
-target_metadata = UserModel.metadata
+target_metadata = BaseModel.metadata
 config = context.config
 
 
 def run_migrations_online() -> None:
-    url = config.get_main_option("sqlalchemy.url") or settings.DB.postgresql_url
+    url = settings.DB.postgresql_url
     connectable = create_engine(url)
 
     with connectable.connect() as connection:

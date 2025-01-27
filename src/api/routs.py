@@ -1,32 +1,48 @@
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Request, status
 
-from schemas.users_schema import User
+from schemas.users_schema import UserRequest
 from controllers.controler import get_controller
 
 router = APIRouter()
 
 
-@router.post('/registration')
-async def registration(user: User, request: Request, controller = Depends(get_controller)) -> Response:
+@router.post('/registration', response_model=str, status_code=status.HTTP_201_CREATED)
+async def registration(
+        user: UserRequest,
+        controller=Depends(get_controller)
+) -> str:
     return await controller.registr(user.login, user.password)
 
 
-@router.post('/authentication')
-async def authentication(user: User, request: Request, controller = Depends(get_controller)) -> Response:
+@router.post('/authentication', response_model=dict, status_code=status.HTTP_200_OK)
+async def authentication(
+        user: UserRequest,
+        request: Request,
+        controller=Depends(get_controller)
+) -> dict:
     return await controller.authentication(user.login, user.password, request)
 
 
-@router.get('/exit')
-async def exit(request: Request, controller = Depends(get_controller)) -> Response:
+@router.get('/exit', status_code=status.HTTP_204_NO_CONTENT)
+async def exit(
+        request: Request,
+        controller=Depends(get_controller)
+) -> None:
     if await controller.access_head(request):
-        return await controller.login_from_del(request)
+        await controller.login_from_del(request)
 
 
-@router.post('/examination')
-async def examination(request: Request, controller = Depends(get_controller)):
+@router.post('/examination', response_model=str, status_code=status.HTTP_200_OK)
+async def examination(
+        request: Request,
+        controller=Depends(get_controller)
+) -> str:
     return await controller.access_head(request)
 
 
-@router.post('/update_token')
-async def update_token(reauest: Request, controller = Depends(get_controller)):
-    return await controller.refresh_head(reauest)
+@router.post('/update_token', response_model=dict, status_code=status.HTTP_200_OK)
+async def update_token(
+        request: Request,
+        controller=Depends(get_controller)
+) -> dict:
+    return await controller.refresh_head(request)

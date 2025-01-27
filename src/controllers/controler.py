@@ -3,9 +3,14 @@ from datetime import timedelta, datetime, timezone
 import os
 from dotenv import load_dotenv
 from fastapi import Request
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 
+from core.loggs_controll import logger_controll
 from core.exceptions import ForbiddenError, UnauthorizedError, NotFoundError
-from storages.jsonfilestorage import JsonFileStorage
+
+from db.connector import DatabaseConnector
+from db.models_table import UserModel
 from storages.redisstorage import RedisStorage
 
 load_dotenv()
@@ -14,58 +19,89 @@ load_dotenv()
 class Conntroller:
     SECRET_KEY = os.getenv('SECRET_KEY')
     ALGORITM = os.getenv('ALGORITM')
+
     def __init__(self, user_db, redis_db):
-        self.user_db: JsonFileStorage = user_db
+        self.user_db: DatabaseConnector = user_db
         self.redis_db: RedisStorage = redis_db
 
-    async def registr(self, login: str, psw: str):
-        id = await self.user_db.get('id')
-        id = str(int(id) + 1)
-        await self.user_db.update('id', id)
-        await self.user_db.add(login, [id, psw])
-        return {'status': '200'}
+    async def registr(self, login: str, psw: str) -> str:
+        logger_controll.info(f"User registration: {login}")
 
-    async def authentication(self, login: str, psw: str, request: Request):
-        if await self.user_db.get(login):
-            data = await self.user_db.get(login)
-            if data[1] == psw:
-                us_ag = request.headers.get('User-Agent')
-                result = await self.creat_pair_jwt(login, data[0])
-                if await self.redis_db.add(data[0], result[0], result[1], us_ag):
-                    return {'access': result[0], 'refresh': result[1]}
+        async with self.user_db.session_maker() as session:
+            try:
+                user = UserModel(login=login, password=psw, role="user")
+                session.add(user)
+                await session.commit()
+            except IntegrityError:
+                logger_controll.error(f"Trying to add an existing user: {login}.")
+                raise f"Trying to add an existing user: {login}."
+        return f"{login} successfully registered."
+
+    async def authentication(self, login: str, psw: str, request: Request) -> dict:
+        logger_controll.info(f"User authentication: {login}")
+
+        async with self.user_db.session_maker() as session:
+            query = select(UserModel.id, UserModel.login, UserModel.password).where(UserModel.login == login)
+            result = await session.execute(query)
+            user = result.fetchone()
+            if not user:
+                logger_controll.error(f"User {login} not found.")
+                raise UnauthorizedError('User not found.')
+            elif user and user.password == psw:
+                user_agent = request.headers.get('User-Agent')
+                pair_jwt = await self.creat_pair_jwt(login, user.id)
+                if await self.redis_db.add(user.id, pair_jwt[0], pair_jwt[1], user_agent):
+                    return {'access': pair_jwt[0], 'refresh': pair_jwt[1]}
             else:
-                raise UnauthorizedError('the password is incorrect')
-        else:
-            raise UnauthorizedError('user not found')
+                logger_controll.error(f"{login}: The password is incorrect.")
+                raise UnauthorizedError('The password is incorrect.')
 
     async def creat_pair_jwt(self, login: str, user_id: str) -> list:
-        access = jwt.encode({'login': login, 'id': user_id, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)}, self.SECRET_KEY, algorithm=self.ALGORITM)
-        refresh = jwt.encode({'login': login, 'id': user_id, 'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)}, self.SECRET_KEY, algorithm=self.ALGORITM)
+        logger_controll.info(f"a pair of tokens has been created for the user: {login}")
+
+        access = jwt.encode(
+            {
+                'login': login,
+                'id': user_id,
+                'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1)
+            },
+            self.SECRET_KEY,
+            algorithm=self.ALGORITM
+        )
+        refresh = jwt.encode(
+            {
+                'login': login,
+                'id': user_id,
+                'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+            },
+            self.SECRET_KEY,
+            algorithm=self.ALGORITM
+        )
         return [access, refresh]
 
-    def loging(self, access):
+    def loging(self, access) -> str:
         try:
             payload = jwt.decode(access, self.SECRET_KEY, algorithms=self.ALGORITM)
             if payload.get('login'):
                 return payload.get('login')
         except jwt.ExpiredSignatureError:
-            raise ForbiddenError('ExpiredSignatureError')
+            raise ForbiddenError('ExpiredSignatureError.')
         except jwt.InvalidTokenError:
-            raise ForbiddenError('InvalidTokenError')
+            raise ForbiddenError('InvalidTokenError.')
 
-    async def get_user_from_access(self, access):
+    async def get_user_from_access(self, access) -> str:
         try:
             payload = jwt.decode(access, self.SECRET_KEY, algorithms=self.ALGORITM)
             if await self.redis_db.get(access):
                 return payload.get('login')
         except jwt.ExpiredSignatureError:
-            raise ForbiddenError('ExpiredSignatureError')
+            raise ForbiddenError('ExpiredSignatureError.')
         except jwt.InvalidTokenError:
-            raise ForbiddenError('InvalidTokenError')
+            raise ForbiddenError('InvalidTokenError.')
         else:
-            raise NotFoundError('Token missing')
+            raise NotFoundError('Token missing.')
 
-    async def get_user_from_refresh(self, refresh, request: Request):
+    async def get_user_from_refresh(self, refresh, request: Request) -> dict:
         try:
             payload = jwt.decode(refresh, self.SECRET_KEY, algorithms=self.ALGORITM)
             if await self.redis_db.get(refresh):
@@ -75,39 +111,34 @@ class Conntroller:
                 if await self.redis_db.update(user_id, result[0], result[1], user_ag):
                     return {'access': result[0], 'refresh': result[1]}
         except jwt.ExpiredSignatureError:
-            raise ForbiddenError('ExpiredSignatureError')
+            raise ForbiddenError('ExpiredSignatureError.')
         except jwt.InvalidTokenError:
-            raise ForbiddenError('InvalidTokenError')
+            raise ForbiddenError('InvalidTokenError.')
         else:
-            raise ForbiddenError('Token to Black List.')
+            raise ForbiddenError('Token is blacklisted.')
 
-
-    async def access_head(self, request: Request):
+    async def access_head(self, request: Request) -> str:
         if request.headers.get('authorization'):
             result = await self.get_user_from_access(request.headers.get('authorization')[7:])
             return result
         else:
-            raise NotFoundError('Token missing')
+            raise NotFoundError('Token missing.')
 
-    async def refresh_head(self, request: Request):
+    async def refresh_head(self, request: Request) -> dict:
         if request.headers.get('refresh'):
             result = await self.get_user_from_refresh(request.headers.get('refresh'), request)
             return result
         else:
-            raise NotFoundError('Token missing')
+            raise NotFoundError('Token missing.')
 
-    async def login_from_del(self, request):
+    async def login_from_del(self, request) -> None:
         if request.headers.get('authorization'):
-            result_log = self.loging(request.headers.get('authorization')[7:])
-            if result_log != {'Error': 'ExpiredSignatureError'} and result_log != {'Error': 'InvalidTokenError'}:
-                payload = jwt.decode(request.headers.get('authorization')[7:], self.SECRET_KEY, algorithms=self.ALGORITM)
-                user_id = payload.get('id')
-                if await self.redis_db.delete(user_id):
-                    return {'status': '200'}
-            else:
-                return result_log
+            payload = jwt.decode(request.headers.get('authorization')[7:], self.SECRET_KEY, algorithms=self.ALGORITM)
+            user_id = payload.get('id')
+            if await self.redis_db.delete(user_id):
+                logger_controll.info(f"{payload.get('login')} User tokens have been removed.")
         else:
-            raise UnauthorizedError('Token missing')
+            raise UnauthorizedError('Token missing.')
 
 
 controller = None

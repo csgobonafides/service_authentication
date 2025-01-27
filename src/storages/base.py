@@ -16,7 +16,7 @@ class BaseStorage:
 class CacheStorage(BaseStorage):
 
     @abc.abstractmethod
-    async def add(self, key: str, value: Any) -> None:
+    async def add(self, user_id: str, access_jwt: str, refresh_jwt: str, user_agent: str) -> None:
         pass
 
     @abc.abstractmethod
@@ -24,7 +24,7 @@ class CacheStorage(BaseStorage):
         pass
 
     @abc.abstractmethod
-    async def update(self, key: str, value: Any) -> None:
+    async def update(self, user_id: str, access_jwt: str, refresh_jwt: str, user_agent: str) -> None:
         pass
 
     @abc.abstractmethod

@@ -9,7 +9,7 @@ config = context.config
 
 
 def run_migrations_online() -> None:
-    url = settings.DB.postgresql_url
+    url = config.get_main_option("sqlalchemy.url") or settings.DB.postgresql_url
     connectable = create_engine(url)
 
     with connectable.connect() as connection:
